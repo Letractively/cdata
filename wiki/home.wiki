@@ -3,6 +3,7 @@
 == Introduction ==
 
 Cdata is a web database development platform for clinical collaborative project.
+
 Clinical setting is a peculiar and complex environment. 
 Common problems: 
   * unclear and ever changing data structure and application requirements
