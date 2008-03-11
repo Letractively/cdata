@@ -8,14 +8,5 @@ Cdata is a web database development platform for clinical collaborative project.
 = Main features =
 
   * Development platform: Php 4/5 and Mysql
-  * Main application modules:
-    * Database
-    * Form
-    * Patient
-    * Project
-    * Todo
-    * Web Page
-    * File
-    * Link
-    * Event
+  * Main application modules: Database, Form, Patient, Project, Todo, Web Page, File, Link, Event
   * Tree-like hierarchical information architecture
