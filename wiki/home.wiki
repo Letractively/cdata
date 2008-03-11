@@ -49,7 +49,7 @@ Technical information and requirement
   * Development platform: Php 4/5 and Mysql
   * Tools used
     * Code Igniter Framework
-    * Yahoo User Interface (Ajax functionalities)
+    * YUI - Yahoo User Interface (Ajax functionalities)
     * TinyMCE Web WYSIWYG Editor
 
 The only pre-requisite is having an Apache-PHP-!MySql platform (Windows or Linux).
