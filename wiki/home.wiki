@@ -36,11 +36,13 @@ Form features
     * Text
     * Integer
     * Float
-    * Date
+    * Date (with calendar popup)
     * Textarea with/without HTML Editor
     * Single/Multiple select box, as a dropdown list, checkboxes or radio buttons
     * Label
   * Tabs
+  * Error control: required, integer, float, min/max, regular expression
+  * Help text
 
 Technical information and requirement
 
@@ -50,5 +52,5 @@ Technical information and requirement
     * Yahoo User Interface (Ajax functionalities)
     * TinyMCE Web WYSIWYG Editor
 
-The only pre-requisite is having an Apache-PHP-MySql platform (Windows or Linux).
-Currently it has been tested only with PHP 5.1+ and MySql 5+.
+The only pre-requisite is having an Apache-PHP-!MySql platform (Windows or Linux).
+Currently it has been tested only with PHP 5.1+ and !MySql 5+.
