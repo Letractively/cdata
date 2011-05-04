@@ -1,0 +1,6 @@
+#Redirect Permanent  /admin/phplist https://www.cure2children.org/admin/phplist
+DirectoryIndex index.html index.php index.htm
+RewriteEngine On 
+RewriteCond %{SERVER_PORT} 80 
+RewriteCond %{REQUEST_URI} admin/phplist 
+RewriteRule ^(.*)$ https://www.cure2children.org/admin/phplist/$1 [R,L]
