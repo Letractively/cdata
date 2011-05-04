@@ -1,0 +1,17 @@
+v0.9.2 : 11/04/07
+ - added options leftOffset et topOffset for relative positionning against
+ the relative element (Jonathan Poissant)
+ - added setPosition method for absolute positionning (Jonathan Poissant)
+ - added relativePosition to activate/desactivate relative positionning
+ - some code clean-up
+
+v0.9.1 : 13/03/07
+ - replace locale by language (RobG)
+ - add support for german language (Kjell Bublitz)
+ - add support for portuguese language
+ - use Prototype.emptyFunction when clickCallBack not defined, should fix
+ possible bug with IE and null objects (Gareth Evans)
+ - some code clean-up using Builder.node
+
+v0.9 : 11/03/07
+ initial release

@@ -1,0 +1,21 @@
+<?php  if (!defined('BASEPATH')) exit('No direct script access allowed');
+
+$config['base_url']	= "https://www.cure2children.org/ws/thdb2/";
+$config['public'] = $config['base_url']."public/";
+$config['js'] = $config['public']."js/";
+$config['yui'] = $config['js']."yui/";
+$config['css'] = $config['public'].'css/';
+$config['images'] = $config['public'].'images/';
+$config["base_path"] = "/srv/www/htdocs/cure2children.org/ws/thdb2/";
+$config["js_path"] = $config["base_path"]."public/js/";
+$config["fileDir"] = "/srv/www/cdata_file/thdb/";
+
+$config['cdata_website_name'] = "C2C DATABASE";
+$config['cdata_user_support'] = 'luigi.clemente@cure2children.org';
+$config['cdata_template_dir'] = 'template/default/';
+
+$config['app_email'] = 'luigi.clemente@cure2children.org';
+$config['app_email_name'] = 'C2CDB Administrator';
+
+
+?>
