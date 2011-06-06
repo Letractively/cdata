@@ -783,10 +783,10 @@ class Relation {
             $cols 
             PRIMARY KEY (id)
             )";
+        
+        $error = "";
         mysql_query($qc);
         $error .= mysql_error();
-        
-        
         //add data
         $qpf = "SELECT * from patient";      
         $pfs = mysql_query($qpf);
@@ -800,7 +800,9 @@ class Relation {
             $update .= "patient_id = '".$pm->myform->form_data["patient_id"]."', ";
             foreach($pm->myform->view_model["fields"] as $key => $prop){
                 $name = preg_replace("/[^a-z\d]/i", "", $key);
-                $value = $pm->myform->form_data[$key];
+                if (array_key_exists($key, $pm->myform->form_data)){
+                    $value = $pm->myform->form_data[$key];
+                } else {$value = "";}
                 $type = $prop["type"]; 
                 $sqlv = "";
                 switch ($type){
@@ -920,7 +922,9 @@ class Relation {
                 foreach($pfm->myform->view_model["fields"] as $key => $prop){
                     $name = preg_replace("/[^a-z\d]/i", "", $key);
                     $name = $this->fprefix.$name;
-                    $value = $pfm->myform->form_data[$key];
+                    if (array_key_exists($key, $pfm->myform->form_data)){
+                        $value = $pfm->myform->form_data[$key];
+                    } else {$value = "";}
                     $type = $prop["type"]; 
                     $sqlv = "";
                     switch ($type){
