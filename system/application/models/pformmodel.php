@@ -241,11 +241,14 @@ class Pformmodel extends Model{
 		$fr = mysql_query($qf);
 		$f = mysql_fetch_assoc($fr);
 		$fs = unserialize($f["data"]);
+        if ( array_key_exists('tab', $fs)){
+            $tabv = $fs['tab'];
+        } else { $tabv = '';}
 		$s = "\$dm = array(".element("data_model", $fs).");".
 		"\$vm = array(".element("view_model", $fs).");".
 		"\$fm = array(".element("form_model", $fs).");".
         "\$lm = array(".element("list_model", $fs).");".
-		"\$tabm = array(".$fs["tab"].");";
+		"\$tabm = array(".$tabv.");";
         
 		eval($s);
         while (list($key, $value) = each($dm)) {
