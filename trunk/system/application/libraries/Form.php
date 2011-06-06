@@ -1336,7 +1336,7 @@ document.write(\"Time and date at your computer's location is: \"
         $sercol = $this->utils_element("serialized_column", $this->data_model["table"]);
         if ($sercol > ""){
             $serdata = $this->utils_element($sercol, $row);
-            if (is_string($serdata)){$ser = unserialize($serdata);}                    
+            if (is_string($serdata)){$ser = @unserialize($serdata);}                    
             if (!empty($ser)){
                 $row = array_merge($row, $ser);
             }
