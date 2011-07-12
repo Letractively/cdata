@@ -777,7 +777,7 @@ YAHOO.util.Event.addListener(window, \"load\", yuilist.init());
         </script>\n";
         
         $form_err = isset($this->form_error["form"]) ? "<b style=\"color:red;\">".$this->form_error["form"]."</b><br/><br/>\n" : "";
-        if ($this->form_model["form"]["locking"] == "true"){
+        if (array_key_exists("form", $this->form_model) and $this->form_model["form"]["locking"] == "true"){
             $page .= "
             
             
