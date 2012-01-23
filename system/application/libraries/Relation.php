@@ -790,6 +790,11 @@ class Relation {
         //add data
         $qpf = "SELECT * from patient";      
         $pfs = mysql_query($qpf);
+
+
+
+
+
         while ($pf = mysql_fetch_assoc($pfs)){
 
             $pm->myform->read_data($pf["patient_id"]);  
@@ -851,6 +856,8 @@ class Relation {
             $update = substr($update, 0 , strlen($update) -2);
             mysql_query($update);
         }
+
+
         $error .= mysql_error();
             
             
@@ -912,6 +919,8 @@ class Relation {
             //add data
             $qpf = "SELECT pform_id from pform WHERE cdform_id = ".$cdf["cdform_id"];      
             $pfs = mysql_query($qpf);
+            
+            
             while ($pf = mysql_fetch_assoc($pfs)){
                 $pfm->myform->read_data($pf["pform_id"]);  
                 $update = "INSERT INTO data_cdform_".$cdf["cdform_id"]." SET "; 
@@ -973,6 +982,7 @@ class Relation {
                 $update = substr($update, 0 , strlen($update) -2);
                 mysql_query($update);
             }
+
             $error .= mysql_error();
         }
         return $error;
@@ -992,6 +1002,8 @@ class Relation {
             return "'".$date."'";
         }
     }
+    
+    
     
     function exportXml($class, $id) {
     
@@ -1023,10 +1035,10 @@ class Relation {
 
 
     //header info for browser: determines file type ('.doc' or '.xls')
-    header("Content-Type: application/$file_type");
-    header("Content-Disposition: attachment; filename=cdata-export.$file_ending");
-    header("Pragma: no-cache");
-    header("Expires: 0");
+    //header("Content-Type: application/$file_type");
+    //header("Content-Disposition: attachment; filename=cdata-export.$file_ending");
+    //header("Pragma: no-cache");
+    //header("Expires: 0");
 
     //start of printing column names as names of MySQL fields
     $colnames = "<Row>\n";
@@ -1151,11 +1163,202 @@ class Relation {
      '.$wsh.'
     </Workbook>';
     
-    print $tplt;
+    $fdir = $this->config->item("fileDir");
+    $myFile = $fdir."export.xls";
+    $fh = fopen($myFile, 'w') or die("can't open file");
+    fwrite($fh, $tplt);
+    fclose($fh);
+    //print $tplt;
+    print "File saved: <a href=\"/file/export.xls\">export.xls</a><br>To download right click and 'Save Link as'";
     exit;
     
     }
     
+    
+    
+    
+    
+    function exportStructure($class, $id) {
+    
+    
+    //$this->updateDataTable();
+    
+    $CI =& get_instance();
+    $CI->load->model('pformmodel');
+    $CI->load->model('patientmodel');
+    
+    $pfm =& $CI->pformmodel;
+    $pm =& $CI->patientmodel;
+    
+    
+    $qform = "select * from cdform";
+    $rform = mysql_query($qform);
+    while ( $form = mysql_fetch_assoc($rform) ){
+        print "<h2>".$form['name']."</h2><br><br>";
+        print_r(unserialize($form['data']));
+        }
+    exit;
+    
+    
+    
+    
+        
+    $where = "";
+    if($class == "db"){
+        $where = "WHERE path LIKE '%(db-$id)%'";
+    }
+    
+    if($class == "patient"){
+        $where = "WHERE patient_id = $id";
+    }
+    $DB_TBLName = "data_patient";                
+    $sql = "Select * from $DB_TBLName $where";
+    $result = @mysql_query($sql)
+        or die("Couldn't execute query:<br>" . mysql_error(). "<br>" . mysql_errno());
+
+    $file_type = "vnd.ms-excel";
+    $file_ending = "xml";
+
+
+    //header info for browser: determines file type ('.doc' or '.xls')
+    //header("Content-Type: application/$file_type");
+    //header("Content-Disposition: attachment; filename=cdata-export.$file_ending");
+    //header("Pragma: no-cache");
+    //header("Expires: 0");
+
+    //start of printing column names as names of MySQL fields
+    $colnames = "<Row>\n";
+    for ($i = 0; $i < mysql_num_fields($result); $i++)
+    {
+        $colnames .= '<Cell><Data ss:Type="String">'.mysql_field_name($result,$i).'</Data></Cell>'."\n";
+    }
+    $colnames .= "</Row>\n";
+    //end of printing column names
+
+    //start while loop to get data
+    $data = "";
+    $type=array();
+    // table column name could be different than keys
+    foreach ($pm->myform->view_model["fields"] as $key => $prop){
+        $type[$this->fprefix.preg_replace("/[^a-z\d]/i", "", $key)] = $prop["type"];
+    }
+    while($row = mysql_fetch_row($result))
+    {
+        $data .= "<Row>\n";
+        for($j=0; $j<mysql_num_fields($result);$j++)
+        {
+            //$meta = mysql_fetch_field($result, $j);
+            //$t = $type[preg_replace("/[^a-z\d]/i", "", $meta->name)];
+            $data .= '<Cell><Data ss:Type="String">'.
+            htmlentities($row[$j]).'</Data></Cell>'."\n";
+        }
+        $data .= "</Row>\n";
+    }
+    
+    //select cdform
+    $qcdform = "SELECT cdform_id, name FROM cdform";
+    $cdforms = mysql_query($qcdform);
+    
+    $wsh = "";
+    // for each cdform
+    if($class == "patient"){
+        $where = "WHERE path LIKE '%(patient-$id)%'";
+    }
+    while ($cdf = mysql_fetch_assoc($cdforms)){
+        
+        $qpf = "Select * from data_cdform_".$cdf["cdform_id"]." $where";
+        $pfs = mysql_query($qpf);
+        if(mysql_num_rows($pfs) == 0){
+            continue;
+        }
+        
+        $wsh .= '<Worksheet ss:Name="'.$cdf["name"].'">
+          <Table x:FullColumns="1"
+           x:FullRows="1" ss:DefaultRowHeight="15">';
+        // load model
+        $pfm->complete_model($cdf["cdform_id"]);
+        $type=array();
+        // table column name could be different than keys
+        foreach ($pfm->myform->view_model["fields"] as $key => $prop){
+            $type[$this->fprefix.preg_replace("/[^a-z\d]/i", "", $key)] = $prop["type"];
+        }
+        
+        
+        
+        //start of printing column names as names of MySQL fields
+        $wsh .= "<Row>\n";
+        for ($i = 0; $i < mysql_num_fields($pfs); $i++)
+        {
+            $wsh .= '<Cell><Data ss:Type="String">'.mysql_field_name($pfs,$i).'</Data></Cell>'."\n";
+        }
+        $wsh .= "</Row>\n";
+        
+        //start while loop to get data
+        while($row = mysql_fetch_row($pfs))
+        {
+            $wsh .= "<Row>\n";
+            for($j=0; $j<mysql_num_fields($pfs);$j++)
+            {
+                //$meta = mysql_fetch_field($pfs, $j);
+                //$t = $type[preg_replace("/[^a-z\d]/i", "", $meta->name)];
+                $wsh .= '<Cell><Data ss:Type="String">'.htmlentities($row[$j]).'</Data></Cell>'."\n";
+            }
+            $wsh .= "</Row>\n";
+        }
+        $wsh .= "</Table></Worksheet>";
+    }
+            
+    
+    $tplt = '<?xml version="1.0"?>
+    <?mso-application progid="Excel.Sheet"?>
+    <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+     xmlns:o="urn:schemas-microsoft-com:office:office"
+     xmlns:x="urn:schemas-microsoft-com:office:excel"
+     xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+     xmlns:html="http://www.w3.org/TR/REC-html40">
+     <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+      <Author>clemente</Author>
+      <LastAuthor>clemente</LastAuthor>
+      <Created>2008-10-27T14:16:27Z</Created>
+      <Version>12.00</Version>
+     </DocumentProperties>
+     <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
+      <WindowHeight>9945</WindowHeight>
+      <WindowWidth>21015</WindowWidth>
+      <WindowTopX>360</WindowTopX>
+      <WindowTopY>135</WindowTopY>
+      <ProtectStructure>False</ProtectStructure>
+      <ProtectWindows>False</ProtectWindows>
+     </ExcelWorkbook>
+     <Styles>
+      <Style ss:ID="Default" ss:Name="Normal">
+       <Alignment ss:Vertical="Bottom"/>
+       <Borders/>
+       <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="11" ss:Color="#000000"/>
+       <Interior/>
+       <NumberFormat/>
+       <Protection/>
+      </Style>
+     </Styles>
+     <Worksheet ss:Name="Patient">
+      <Table x:FullColumns="1"
+       x:FullRows="1" ss:DefaultRowHeight="15">
+       '.$colnames.$data.'
+      </Table>
+     </Worksheet>
+     '.$wsh.'
+    </Workbook>';
+    
+    $fdir = $this->config->item("fileDir");
+    $myFile = $fdir."export.xml";
+    $fh = fopen($myFile, 'w') or die("can't open file");
+    fwrite($fh, $tplt);
+    fclose($fh);
+    //print $tplt;
+    print "File saved";
+    exit;
+    
+    }
     
     
     function releaseLock($class, $id){
