@@ -1035,10 +1035,10 @@ class Relation {
 
 
     //header info for browser: determines file type ('.doc' or '.xls')
-    //header("Content-Type: application/$file_type");
-    //header("Content-Disposition: attachment; filename=cdata-export.$file_ending");
-    //header("Pragma: no-cache");
-    //header("Expires: 0");
+    header("Content-Type: application/$file_type");
+    header("Content-Disposition: attachment; filename=cdata-export.$file_ending");
+    header("Pragma: no-cache");
+    header("Expires: 0");
 
     //start of printing column names as names of MySQL fields
     $colnames = "<Row>\n";
@@ -1168,8 +1168,8 @@ class Relation {
     $fh = fopen($myFile, 'w') or die("can't open file");
     fwrite($fh, $tplt);
     fclose($fh);
-    //print $tplt;
-    print "File saved: <a href=\"/file/export.xls\">export.xls</a><br>To download right click and 'Save Link as'";
+    print $tplt;
+    //print "File saved: <a href=\"/file/export.xls\">export.xls</a><br>To download right click and 'Save Link as'";
     exit;
     
     }
